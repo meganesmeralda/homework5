@@ -7,7 +7,7 @@
 # Preliminaries -----------------------------------------------------------
 # Load required packages
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata, scales, knitr, modelsummary, broom)
+pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, stringr, readxl, data.table, gdata, scales, knitr, modelsummary, broom, fixest)
 
 final.data <- read_tsv('data/output/acs_medicaid.txt')
 
@@ -77,7 +77,7 @@ q4 <- ggplot(uninsured.share, aes(x = year, y = share_uninsured, color = expand_
     geom_point() +
     geom_vline(xintercept = 2014, linetype = "dashed", color = "black") +
     scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-    scale_color_manual(values = c("darkslategrey", "lightslategrey")) +
+    scale_color_manual(values = c("darkslategrey", "steelblue4")) +
     labs(
         title = "Uninsured Rate by Medicaid Expansion Status (2012–2019)",
         x = "Year",
@@ -108,7 +108,35 @@ q5 <- dd.table %>%
   )
  print(q5)
 
-# Question 6: 
+# Question 6: DID regression for Medicaid expansion effect
+dd.reg.data <- final.data.exp %>%
+  filter(expand_group %in% c("Expanded in 2014", "Never Expanded")) %>%
+  mutate(
+    treat = ifelse(expand_group == "Expanded in 2014", 1, 0),
+    post = ifelse(year >= 2014, 1, 0),
+    treat_post = treat * post,
+    uninsured_rate = uninsured / adult_pop
+  )
+q6 <- lm(uninsured_rate ~ treat + post + treat_post, data = dd.reg.data)
+summary(q6)
+
+# Question 7: DID with State and Year Fixed Effects
+q7 <- feols(uninsured_rate ~ treat_post | State + year, data = dd.reg.data)
+summary(q7)
+library(modelsummary)
+modelsummary(q7, stars = TRUE, output = "markdown")
+
+# Questino 8: DID with All States
+# Create treatment indicator based on expansion date
+dd_all_states <- final.data %>%
+  mutate(
+    year = as.integer(year),
+    treat = if_else(!is.na(date_adopted) & year >= year(date_adopted), 1, 0),
+    uninsured_rate = uninsured / adult_pop  # <- this line adds the column
+  )
+# Estimate DiD model with state and year fixed effects
+q8 <- feols(uninsured_rate ~ treat | State + year, data = dd_all_states)
+summary(q8)
 
 rm(list=c("final.data"))
 save.image("submission1/results/hwk5_workspace.Rdata")

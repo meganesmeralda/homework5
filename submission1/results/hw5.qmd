@@ -76,7 +76,7 @@ q5
 Estimate the effect of Medicaid expansion on the uninsurance rate using a standard DD regression estimator, again focusing only on states that expanded in 2014 versus those that never expanded.
 ```{r}
 #| echo: false
-
+summary(q6)
 ```
 
 \newpage 
@@ -92,7 +92,7 @@ Include state and year fixed effects in your estimates. Try using the lfe or fix
 Repeat the analysis in question 7 but include all states (even those that expanded after 2014). Are your results different? If so, why?
 ```{r}
 #| echo: false
-
+summary(q8)
 ```
 
 \newpage 
