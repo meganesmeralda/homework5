@@ -84,7 +84,7 @@ summary(q6)
 Include state and year fixed effects in your estimates. Try using the lfe or fixest package to estimate this instead of directly including the fixed effects.
 ```{r}
 #| echo: false
-
+summary(q7)
 ```
 
 \newpage 

@@ -108,6 +108,34 @@ q5 <- dd.table %>%
   )
  print(q5)
 
+dd_q5 <- final.data.exp %>%
+  filter(year %in% c(2012, 2015)) %>%
+  mutate(
+    treat = ifelse(expand_group == "Expanded in 2014", 1, 0),
+    post = ifelse(year == 2015, 1, 0),
+    treat_post = treat * post,
+    uninsured_rate = uninsured / adult_pop
+  )
+
+# Step 2: Estimate DiD with no fixed effects (classic DD setup)
+mod_q5 <- feols(uninsured_rate ~ treat + post + treat_post, data = dd_q5)
+
+# Step 3: Display DD coefficient
+summary(mod_q5)
+# # ATE, Q5 - Event study with constant treatment
+#  mod.twfe <- feols(perc_unins~i(year, expand_ever. ref=2013) | State + year,
+#                    cluster=~State,
+#                    data=reg.data)
+
+# # ATE, Q6 - Event study with time varying treatment
+# reg.data2 <- reg.data2%>%
+#   mutate(time_to_trest=ifelse(expand_ever==TRUE, year-expand_year, -1),
+#          time_to_treat=ifelse(time_to_treat<=-4, -4, time_to_treat))
+
+# mod.twfe2 <- feols(perc_unins~i(time_to_treat, expand_ever. ref=-1) | State + year,
+#                    cluster=~State,
+#                    data=reg.data2)
+
 # Question 6: DID regression for Medicaid expansion effect
 dd.reg.data <- final.data.exp %>%
   filter(expand_group %in% c("Expanded in 2014", "Never Expanded")) %>%
@@ -119,6 +147,8 @@ dd.reg.data <- final.data.exp %>%
   )
 q6 <- lm(uninsured_rate ~ treat + post + treat_post, data = dd.reg.data)
 summary(q6)
+
+## use the feols package
 
 # Question 7: DID with State and Year Fixed Effects
 q7 <- feols(uninsured_rate ~ treat_post | State + year, data = dd.reg.data)
