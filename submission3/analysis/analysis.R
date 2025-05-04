@@ -31,7 +31,7 @@ q1 <- direct.plot <- final.data %>% group_by(year) %>% summarize(mean=mean(perc_
     x="Year",
     y="Fraction with Direct Purchase",
     title="Share of Direct Purchase Insurance over Time") +
-  geom_vline(xintercept=2013.5, color="black")
+  geom_vline(xintercept=2013.5, color="red")
 
 # Question 2: written response
 

@@ -4,7 +4,7 @@ subtitle: "ECON 470, Spring 2025"
 author: "Megan Zheng"
 format:
   pdf:
-    output-file: "zheng_m_hwk5_2"
+    output-file: "zheng_m_hwk5_3"
     output-ext:  "pdf"
     header-includes:
       - \usepackage{float}
@@ -31,7 +31,9 @@ final.data <- read_tsv("/Users/meganzheng/Documents/GitHub/homework5/data/output
 load("/Users/meganzheng/Documents/GitHub/homework5/submission3/results/hwk5_workspace.Rdata")
 ```
 
-Submission 2, you can find my code [here](https://github.com/meganesmeralda/homework5).
+This assignment analyzes the effects of the Affordable Care Act (ACA), with a particular focus on Medicaid expansion and trends in insurance coverage between 2008 and 2019. Using descriptive graphs, difference-in-differences (DiD) estimation, and two-way fixed effects (TWFE) models, the analysis explores how state-level decisions to expand Medicaid impacted the uninsured rate. The assignment also considers alternative policy explanations for observed trends and provides thoughtful interpretation of the data and results.
+
+If you would like to look into how the analysis was performed, you can find my code [here](https://github.com/meganesmeralda/homework5).
 
 \newpage 
 ### Question 1: 
@@ -40,18 +42,23 @@ Plot the share of the adult population with direct purchase health insurance ove
 #| echo: false
 q1
 ```
+Figure 1 illustrates the steady decline in the share of adults with direct purchase insurance beginning around 2016. 
 
-\newpage 
+
+
 ### Question 2: 
 Discuss the reduction in direct purchase health insurance in later years. Can you list a couple of policies that might have affected the success of the direct purchase insurance market?
 
+The reduction in direct purchase health insurance in the later years can be credited to policies that affected that market. In 2017, the Trump administration cut off Cost-Sharing Reduction (CSR) payments. These CSR payments were federal government reimbursment to insurers for providing  discounts to help lower out-of-pocket costs for low-income individuals on ACA marketplaces. However, with the repeal of this program, insurers didn't offer the same discounts anymore, thus raising premiums which made coverage less appealing. Also in 2017, the penalty for being uninsured went to 0, which could've led to healthy individuals opting to not purchase health insurance.
+
 \newpage 
 ### Question 3: 
-Discuss the reduction in direct purchase health insurance in later years. Can you list a couple of policies that might have affected the success of the direct purchase insurance market?
+Plot the share of the adult population with Medicaid over time.
 ```{r}
 #| echo: false
 q3
 ```
+The share of adults with Medicaid coverage rose sharply starting in 2014, consistent with the implementation of Medicaid expansion under the ACA in many states
 
 \newpage 
 ### Question 4: 
@@ -60,6 +67,7 @@ Plot the share of uninsured over time, separately by states that expanded Medica
 #| echo: false
 q4
 ```
+The uninsured rate declined more rapidly in states that expanded Medicaid in 2014, highlighting the immediate effect of expansion. Non-expansion states saw a more modest decline.
 
 \newpage 
 # Estimating ATEs
@@ -109,6 +117,7 @@ Repeat the analysis in question 7 but include all states (even those that expand
 #| fig-align: "center"
 knitr::include_graphics("/Users/meganzheng/Documents/GitHub/homework5/submission3/results/q8.png")
 ```
+When including states that expanded Medicaid after 2014, we see that estimated treatment effect changes, becoming smaller or statistically insignificant. This difference happens because treatment timing becomes staggered, violating the parallel trends assumption underpinning basic Difference-in-Differences (DiD) estimators. States that expanded in different years may have had different baseline trends or experienced policy effects at different times, diluting the estimated average treatment effect when lumped together. Without properly accounting for treatment timing (for example, via event study or staggered DiD models), the estimate loses precision and interpretability.
 
 \newpage 
 ### Question 9: 
